@@ -5,28 +5,41 @@ import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
 import { useState } from "react";
 
-const TODO_LIST = [
-  { id: 1, title: "walking the dog", isCompleted: true },
-  { id: 2, title: "runing the dog", isCompleted: false },
-  { id: 3, title: "sound of the dog", isCompleted: false },
-  { id: 4, title: "house of the dog", isCompleted: true },
-  { id: 5, title: "food of the dog", isCompleted: false },
-  { id: 6, title: "toy of the dog", isCompleted: false },
-  { id: 7, title: "house of the dog", isCompleted: true },
-  { id: 8, title: "food of the dog", isCompleted: false },
-  { id: 9, title: "toy of the dog", isCompleted: false },
-];
-
 export default function App() {
-  const [todoList, setTodoList] = useState(TODO_LIST);
+  const [todoList, setTodoList] = useState([
+    { id: 1, title: "walking the dog", isCompleted: true },
+    { id: 2, title: "runing the dog", isCompleted: false },
+    { id: 3, title: "sound of the dog", isCompleted: false },
+    { id: 4, title: "house of the dog", isCompleted: true },
+    { id: 5, title: "food of the dog", isCompleted: false },
+    { id: 6, title: "toy of the dog", isCompleted: false },
+    { id: 7, title: "house of the dog", isCompleted: true },
+    { id: 8, title: "food of the dog", isCompleted: false },
+    { id: 9, title: "toy of the dog", isCompleted: false },
+  ]);
 
   function renderTodoList() {
     return todoList.map((todo) => (
       <View key={todo.id} style={s.CardItem}>
-        <CardTodo todo={todo} />
+        <CardTodo onPress={updateTodo} todo={todo} />
       </View>
     ));
   }
+
+  function updateTodo(todo) {
+    const updatedTodo = {
+      ...todo,
+      isCompleted: !todo.isCompleted,
+    };
+
+    const updatedTodoList = [...todoList];
+    const indexToUpdate = updatedTodoList.findIndex(
+      (t) => t.id === updatedTodo.id
+    );
+    updatedTodoList[indexToUpdate] = updateTodo;
+    setTodoList(updatedTodoList);
+  }
+
   return (
     <>
       <SafeAreaProvider>
