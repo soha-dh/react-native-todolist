@@ -5,21 +5,16 @@ import { Header } from "./components/Header/Header";
 import { CardTodo } from "./components/CardTodo/CardTodo";
 import { useState } from "react";
 import { TabButtonMenu } from "./components/TabButtonMenu/TabButtonMenu";
+import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
+import Dialog from "react-native-dialog";
+import uuid from "react-native-uuid";
 
 export default function App() {
-  const [todoList, setTodoList] = useState([
-    { id: 1, title: "walking the dog", isCompleted: true },
-    { id: 2, title: "runing the dog", isCompleted: false },
-    { id: 3, title: "sound of the dog", isCompleted: false },
-    { id: 4, title: "house of the dog", isCompleted: true },
-    { id: 5, title: "food of the dog", isCompleted: false },
-    { id: 6, title: "toy of the dog", isCompleted: false },
-    { id: 7, title: "house of the dog", isCompleted: true },
-    { id: 8, title: "food of the dog", isCompleted: false },
-    { id: 9, title: "toy of the dog", isCompleted: false },
-  ]);
+  const [todoList, setTodoList] = useState([]);
 
   const [selectedTabName, setSelectedTabName] = useState("all");
+  const [isAddDialogDisplayed, setIsAddDialogDisplayed] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   function getFilteredList() {
     switch (selectedTabName) {
@@ -66,6 +61,43 @@ export default function App() {
     setTodoList(updatedTodoList);
   }
 
+  function addTodo() {
+    const newTodo = {
+      id: uuid.v4(),
+      title: inputValue,
+      isCompleted: false,
+    };
+    setTodoList([...todoList, newTodo]);
+    setIsAddDialogDisplayed(false);
+    setInputValue("");
+  }
+
+  function renderAddDialog() {
+    return (
+      <Dialog.Container
+        visible={isAddDialogDisplayed}
+        onBackdropPress={() => setIsAddDialogDisplayed(false)}
+      >
+        <Dialog.Title>Add todo</Dialog.Title>
+        <Dialog.Description>Choose a name for your todo</Dialog.Description>
+        <Dialog.Input
+          placeholder="EX: Travel at 6am"
+          onChangeText={(text) => setInputValue(text)}
+        />
+        <Dialog.Button
+          label="Cancel"
+          color="gray"
+          onPress={() => setIsAddDialogDisplayed(false)}
+        />
+        <Dialog.Button
+          disabled={inputValue.length === 0}
+          label="Save"
+          onPress={addTodo}
+        />
+      </Dialog.Container>
+    );
+  }
+
   return (
     <>
       <SafeAreaProvider>
@@ -76,6 +108,7 @@ export default function App() {
           <View style={s.body}>
             <ScrollView>{renderTodoList()}</ScrollView>
           </View>
+          <ButtonAdd onPress={() => setIsAddDialogDisplayed(true)} />
         </SafeAreaView>
       </SafeAreaProvider>
       <View style={s.footer}>
@@ -85,6 +118,7 @@ export default function App() {
           selectedTabName={selectedTabName}
         />
       </View>
+      {renderAddDialog()}
     </>
   );
 }
