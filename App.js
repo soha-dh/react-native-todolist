@@ -19,10 +19,21 @@ export default function App() {
     { id: 9, title: "toy of the dog", isCompleted: false },
   ]);
 
-  const [selectedTabName, setSelectedTabName] = useState("inProgress");
+  const [selectedTabName, setSelectedTabName] = useState("all");
+
+  function getFilteredList() {
+    switch (selectedTabName) {
+      case "all":
+        return todoList;
+      case "inProgress":
+        return todoList.filter((todo) => todo.isCompleted === false);
+      case "done":
+        return todoList.filter((todo) => todo.isCompleted === true);
+    }
+  }
 
   function renderTodoList() {
-    return todoList.map((todo) => (
+    return getFilteredList().map((todo) => (
       <View key={todo.id} style={s.CardItem}>
         <CardTodo onPress={updateTodo} todo={todo} />
       </View>
@@ -57,6 +68,7 @@ export default function App() {
       </SafeAreaProvider>
       <View style={s.footer}>
         <TabButtonMenu
+          todoList={todoList}
           onPress={setSelectedTabName}
           selectedTabName={selectedTabName}
         />
